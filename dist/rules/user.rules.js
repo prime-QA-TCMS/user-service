@@ -4,10 +4,10 @@ export const ensureUniqueEmail = async (email) => {
     if (existing)
         throw new Error("Email already in use");
 };
-export const validateRoleAssignment = async (roleId, actorRole) => {
-    const role = await RoleModel.findById(roleId);
+export const validateRoleAssignment = async (roleId, actorRole, tenantId) => {
+    const role = await RoleModel.findOne({ _id: roleId, tenant: tenantId, isDeleted: false });
     if (!role)
-        throw new Error("Invalid role selected");
+        throw new Error("Invalid role selected for tenant");
     // Example: only admins can assign non-viewer roles
     if (actorRole !== "admin" && role.name !== "viewer")
         throw new Error("Insufficient permissions to assign that role");

@@ -5,6 +5,8 @@ export interface IRole extends Document {
   name: string;
   description?: string;
   permissions: mongoose.Types.ObjectId[] | IPermission[];
+  tenant: mongoose.Types.ObjectId;
+  isDeleted: boolean;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -13,11 +15,12 @@ const RoleSchema = new Schema<IRole>(
   {
     name: {
       type: String,
-      required: true,
-      unique: true
+      required: true
     },
     description: { type: String },
-    permissions: [{ type: Schema.Types.ObjectId, ref: "Permission" }]
+    permissions: [{ type: Schema.Types.ObjectId, ref: "Permission" }],
+    tenant: { type: Schema.Types.ObjectId, ref: "Tenant", required: true },
+    isDeleted: { type: Boolean, default: false }
   },
   { timestamps: true }
 );

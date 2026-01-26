@@ -1,7 +1,7 @@
 import { TenantModel } from "../models/tenant.model.js";
 import { UserModel } from "../models/user.model.js";
 export const ensureTenantNameUnique = async (name) => {
-    const existing = await TenantModel.findOne({ name });
+    const existing = await TenantModel.findOne({ name, isDeleted: false });
     if (existing)
         throw new Error("Tenant name must be unique");
 };
