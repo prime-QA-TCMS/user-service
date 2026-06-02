@@ -34,6 +34,19 @@ const permissions = [
 	{ code: 'testcase.update', description: 'Update test cases' },
 	{ code: 'testcase.delete', description: 'Delete test cases' },
 	{ code: 'test.execute', description: 'Execute tests' },
+	// Configuration Service permissions
+	{ code: 'environment.create', description: 'Create environments' },
+	{ code: 'environment.read', description: 'Read environments' },
+	{ code: 'environment.update', description: 'Update environments' },
+	{ code: 'environment.delete', description: 'Delete environments' },
+	{ code: 'integration.create', description: 'Create integrations' },
+	{ code: 'integration.read', description: 'Read integrations' },
+	{ code: 'integration.update', description: 'Update integrations' },
+	{ code: 'integration.delete', description: 'Delete integrations' },
+	{ code: 'parameter.create', description: 'Create parameters' },
+	{ code: 'parameter.read', description: 'Read parameters' },
+	{ code: 'parameter.update', description: 'Update parameters' },
+	{ code: 'parameter.delete', description: 'Delete parameters' },
 ];
 
 const roles = [
