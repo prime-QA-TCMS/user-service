@@ -2,64 +2,60 @@ name: PR NPM Tests
 
 on:
   pull_request:
-    branches:
-      - main
-      - develop
-    paths:
-      - 'PrimeQAUI/**'
-      - 'user-service/**'
-      - 'project-service/**'
-      - 'testcase-service/**'
-      - 'configuration-service/**'
-      - 'results-service/**'
-      - '.github/workflows/pr-npm-tests.yml'
+  push:
+  workflow_dispatch:
 
 permissions:
   contents: read
 
-concurrency:
-  group: pr-npm-tests-${{ github.event.pull_request.number || github.ref }}
-  cancel-in-progress: true
-
 jobs:
+  discover:
+    runs-on: ubuntu-latest
+    outputs:
+      dirs: ${{ steps.find.outputs.dirs }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - id: find
+        shell: bash
+        run: |
+          dirs=$(find . -name package.json \
+            -not -path "*/node_modules/*" \
+            -not -path "*/dist/*" \
+            -not -path "*/build/*" \
+            -not -path "*/coverage/*" \
+            -exec dirname {} \; \
+            | sed 's#^\./##' \
+            | jq -R -s -c 'split("\n")[:-1]')
+
+          echo "dirs=$dirs" >> "$GITHUB_OUTPUT"
+
   npm-test:
-    name: npm test - ${{ matrix.service }}
+    needs: discover
+    if: ${{ needs.discover.outputs.dirs != '[]' }}
     runs-on: ubuntu-latest
 
     strategy:
       fail-fast: false
       matrix:
-        include:
-          - service: PrimeQAUI
-            path: PrimeQAUI
-          - service: user-service
-            path: user-service
-          - service: project-service
-            path: project-service
-          - service: testcase-service
-            path: testcase-service
-          - service: configuration-service
-            path: configuration-service
-          - service: results-service
-            path: results-service
+        path: ${{ fromJson(needs.discover.outputs.dirs) }}
+
+    name: npm test - ${{ matrix.path }}
 
     defaults:
       run:
         working-directory: ${{ matrix.path }}
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v6
+      - uses: actions/checkout@v4
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v6
+      - uses: actions/setup-node@v4
         with:
-          node-version: '22'
+          node-version: 22
           cache: npm
           cache-dependency-path: ${{ matrix.path }}/package-lock.json
 
       - name: Install dependencies
-        shell: bash
         run: |
           if [ -f package-lock.json ]; then
             npm ci
