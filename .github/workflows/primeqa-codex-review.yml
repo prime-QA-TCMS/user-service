@@ -1,0 +1,14 @@
+name: Prime QA Independent Codex Review
+on:
+  pull_request:
+    types: [opened, reopened, synchronize, ready_for_review]
+jobs:
+  review:
+    if: startsWith(github.head_ref, 'ai/')
+    uses: prime-QA-TCMS/primeqa-project/.github/workflows/primeqa-codex-review-reusable.yml@main
+    with:
+      pr_number: ${{ github.event.pull_request.number }}
+      pr_body: ${{ github.event.pull_request.body || '' }}
+    secrets:
+      OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+      PRIMEQA_AUTOMATION_TOKEN: ${{ secrets.PRIMEQA_AUTOMATION_TOKEN }}
