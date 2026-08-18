@@ -1,0 +1,15 @@
+name: Prime QA Codex Worker
+on:
+  repository_dispatch:
+    types: [primeqa-codex-task]
+jobs:
+  worker:
+    uses: prime-QA-TCMS/primeqa-project/.github/workflows/primeqa-codex-worker-reusable.yml@main
+    with:
+      control_repo: ${{ github.event.client_payload.control_repo }}
+      issue_number: ${{ github.event.client_payload.issue_number }}
+      issue_url: ${{ github.event.client_payload.issue_url }}
+      shared_package: false
+    secrets:
+      OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+      PRIMEQA_AUTOMATION_TOKEN: ${{ secrets.PRIMEQA_AUTOMATION_TOKEN }}
